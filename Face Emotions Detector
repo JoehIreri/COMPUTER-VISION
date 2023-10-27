@@ -1,0 +1,61 @@
+import cv2
+import tensorflow as tf
+
+# Load the pre-trained model for emotion detection
+model = tf.keras.models.load_model('model.hdf5')
+# Define the emotion labels
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+
+# Load the face detection cascade
+face_cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+face_cascade = cv2.CascadeClassifier(face_cascade_path)
+
+# Load and process the image
+image_path = r'C:\Users\JOEHMWENDE\Desktop\FED\Facial Expression.jpg'
+try:
+    image = cv2.imread(image_path)
+    if image is None:
+        raise ValueError("Failed to read image")
+
+    # Convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the image
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(40, 40))
+
+    # Process each detected face
+    for (x, y, w, h) in faces:
+        # Extract the face region
+        face = gray[y:y + h, x:x + w]
+
+        # Resize the face image to match the input size expected by the model
+        input_size = (48, 48)
+        face_resized = cv2.resize(face, input_size)
+
+        # Normalize the face image
+        input_image = face_resized / 255.0
+
+        # Reshape the image to match the input shape expected by the model
+        input_image = tf.expand_dims(input_image, 0)
+        input_image = tf.expand_dims(input_image, -1)
+
+        # Perform emotion detection
+        emotions = model.predict(input_image)[0]
+        predicted_emotion = emotion_labels[tf.argmax(emotions)]
+
+        # Draw bounding box around the face
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        # Display the predicted emotion on the image
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        cv2.putText(image, predicted_emotion, (x, y - 10), font, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
+
+    # Display the image with emotion predictions
+    cv2.imshow("Emotion Detection", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+except cv2.error as e:
+    print(f"Error occurred while processing the image: {str(e)}")
+except Exception as e:
+    print(f"An error occurred: {str(e)}")
