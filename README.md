@@ -47,37 +47,54 @@ This project focuses on detecting facial expressions in images using a pre-train
 
 - **face_cascade_path:** The path to the Haar Cascade classifier XML file for face detection.
 
-# Parking Lot Occupancy Detection
+- 
+# ParkingLot Occupancy Detection
 
 ## Overview
 
-This project aims to detect the occupancy status of a parking lot by analyzing images or video frames from surveillance cameras. The system determines whether parking spaces are empty or occupied, helping users find available parking spots more efficiently.
+This system monitors parking spaces in a video and provides information about the occupancy of each space. It includes functionalities to preprocess video frames, apply image processing techniques, and visualize the results.
 
 ## Features
 
-- Parking lot occupancy status detection.
-- Visualization of detected contours on the parking lot image.
-- Easy integration with surveillance camera feeds.
+- **Video Input:** The system takes input from a video file (`ParkingLotVideo.mp4`).
+
+- **Parking Space Positions:** The positions of parking spaces are loaded from a pickled file (`Parkinglotpositions`).
+
+- **Image Processing:**
+  - Grayscale conversion.
+  - Gaussian blur.
+  - Adaptive thresholding.
+  - Noise removal using median blur.
+  - Dilation to fill gaps in parking spaces.
+
+- **Parking Space Occupancy:**
+  - The system checks the occupancy of each parking space based on pixel count.
+  - Rectangles are drawn around parking spaces on the original image.
+  - The count of free spaces is displayed on the image.
 
 ## Prerequisites
 
-- Python 3.x
-- OpenCV (`pip install opencv-python`)
-- Numpy (`pip install numpy`)
+- Python
+- OpenCV
+- Numpy
+- Cvzone
+- Pickle
 
 ## Usage
 
-1. Clone the repository:
+1. Ensure the required dependencies are installed.
+   ```bash
+   pip install opencv-python numpy cvzone
+Run the script.
 
-2. Install dependencies:
+bash
+Copy code
+python script_name.py
+The processed video frames will be displayed, showing parking space occupancy.
 
-3. Run the detection script:
+File Descriptions
+ParkingLotVideo.mp4: Input video file.
+Parkinglotpositions: Pickled file containing parking space positions.
 
-4. View the results:
 
-    The script will display whether the parking lot is empty or occupied, and it will show the original image with drawn contours indicating detected objects.
-
-## Configuration
-
-- **occupancy_threshold:** Adjust this threshold to control the sensitivity of occupancy detection.
 
